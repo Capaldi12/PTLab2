@@ -1,9 +1,19 @@
 SELECT
     shop_product.id,
     shop_product.name,
-    shop_product.price,
     shop_product.initial_amount - ifnull(purchase_count.purchased, 0)
-        AS amount_left
+        AS amount_left,
+    CAST(
+        CASE
+            WHEN
+                ifnull(purchase_count.purchased, 0)
+                    > shop_product.initial_amount / 2
+            THEN
+                shop_product.price * 1.2
+            ELSE
+                shop_product.price
+        END AS int
+    ) AS price
 FROM
     shop_product
 LEFT JOIN
